@@ -1,4 +1,4 @@
-SIGN-THAT-DOC
+### SIGN-THAT-DOC
 
 ````markdown
 # Document Signature App ✍️
