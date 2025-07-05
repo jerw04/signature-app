@@ -32,7 +32,6 @@ This is a full-stack web app where users can upload PDF documents, drag and drop
 ## How to Run Locally
 
 ### Backend
-```bash
 cd server
 npm install
 npm start
@@ -72,9 +71,8 @@ export default API_BASE;
 
 ## Author
 
-Jerwin Manuel
+Jerwin Manuel \n
 VIT University
 📩 [jerwin.manuel2022@vitstudent.ac.in](mailto:jerwin.manuel2022@vitstudent.ac.in)
 
-```
 
