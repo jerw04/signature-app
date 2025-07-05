@@ -71,7 +71,7 @@ export default API_BASE;
 
 ## Author
 
-Jerwin Manuel \n
+Jerwin Manuel
 VIT University
 📩 [jerwin.manuel2022@vitstudent.ac.in](mailto:jerwin.manuel2022@vitstudent.ac.in)
 
