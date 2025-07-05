@@ -35,14 +35,30 @@ const DocumentDashboard = ({ refresh }) => {
               <p className="text-sm text-gray-500 mt-1">
                 Uploaded on {new Date(doc.createdAt).toLocaleString()}
               </p>
-              <a
-                href={`http://localhost:5000/${doc.path.replace(/\\/g, '/')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-block bg-indigo-500 text-white px-4 py-1.5 rounded hover:bg-indigo-600 text-sm transition"
-              >
-                🔍 Preview
-              </a>
+
+              {/* Action Buttons */}
+              <div className="mt-3 flex space-x-2">
+                <a
+                  href={`http://localhost:5000/${doc.path.replace(/\\/g, '/')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-indigo-500 text-white px-3 py-1.5 rounded hover:bg-indigo-600 text-sm transition"
+                >
+                  🔍 Preview
+                </a>
+
+                <button
+                  onClick={() =>
+                    window.open(
+                      `/sign?file=${encodeURIComponent(doc.path)}`,
+                      '_blank'
+                    )
+                  }
+                  className="bg-yellow-500 text-white px-3 py-1.5 rounded hover:bg-yellow-600 text-sm transition"
+                >
+                  🖊 Sign
+                </button>
+              </div>
             </div>
           ))}
         </div>

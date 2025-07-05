@@ -45,6 +45,9 @@ app.use('/api/auth', authRoutes);
 const documentRoutes = require('./routes/documentRoutes');
 app.use('/api/docs', documentRoutes);
 
+const signatureRoutes = require('./routes/signatureRoutes');
+app.use('/api/signatures', signatureRoutes);
+
 // Basic route for testing
 app.get('/', (req, res) => {
   res.send('Signature App Backend is Running');
