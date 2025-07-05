@@ -5,6 +5,10 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import sampleSignature from '../assets/sign.png';
 
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
+// Load local worker for deployment-friendly setup
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 const SignPDF = () => {
@@ -12,6 +16,7 @@ const SignPDF = () => {
   const [signatureCoords, setSignatureCoords] = useState({ x: 100, y: 100 });
   const [existingSignature, setExistingSignature] = useState(null);
   const [searchParams] = useSearchParams();
+  const captureRef = useRef();
 
   const filePath = searchParams.get('file');
   const pdfUrl = `http://localhost:5000/${filePath?.replace(/\\/g, '/')}`;
@@ -60,13 +65,38 @@ const SignPDF = () => {
     }
   };
 
+  const handleDownload = async () => {
+    const container = captureRef.current;
+    if (!container) return alert('PDF view not ready');
+
+    try {
+      const canvas = await html2canvas(container, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('signed-document.pdf');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to download PDF.');
+    }
+  };
+
   return (
     <div className="flex flex-col items-center p-6">
       <h2 className="text-2xl font-bold mb-6 text-indigo-700">🖊 Drag Your Signature</h2>
 
-      {/* Relative container to stack layers */}
-      <div className="relative shadow-xl rounded-xl overflow-hidden" style={{ width: 600 }}>
-        {/* PDF Layer */}
+      {/* Capture region */}
+      <div
+        ref={captureRef}
+        className="relative shadow-xl rounded-xl overflow-hidden bg-white"
+        style={{ width: 600 }}
+      >
         <Document
           file={pdfUrl}
           onLoadSuccess={handleDocumentLoadSuccess}
@@ -76,7 +106,7 @@ const SignPDF = () => {
           <Page pageNumber={1} width={600} />
         </Document>
 
-        {/* Stamped Signature Layer */}
+        {/* Existing Signature */}
         {existingSignature && (
           <div
             className="absolute pointer-events-none z-20"
@@ -93,7 +123,7 @@ const SignPDF = () => {
           </div>
         )}
 
-        {/* Draggable Signature Layer */}
+        {/* Draggable Signature */}
         <Draggable
           bounds="parent"
           position={signatureCoords}
@@ -116,12 +146,22 @@ const SignPDF = () => {
         </Draggable>
       </div>
 
-      <button
-        onClick={handleSave}
-        className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
-      >
-        Save Signature
-      </button>
+      {/* Buttons */}
+      <div className="flex gap-4 mt-6">
+        <button
+          onClick={handleSave}
+          className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700 transition"
+        >
+          Save Signature
+        </button>
+
+        <button
+          onClick={handleDownload}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Download Signed Copy
+        </button>
+      </div>
     </div>
   );
 };
