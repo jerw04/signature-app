@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import API_BASE from '../config';
 
 const Upload = ({ onUploadComplete }) => {
   const [file, setFile] = useState(null);
@@ -15,21 +16,20 @@ const Upload = ({ onUploadComplete }) => {
     if (!file) return;
 
     setUploading(true);
-    setAnimateOut(true); // Start animation
+    setAnimateOut(true);
 
     const formData = new FormData();
     formData.append('document', file);
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/docs/upload', formData, {
+      await axios.post(`${API_BASE}/api/docs/upload`, formData, {
         headers: {
           'x-auth-token': token,
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      // Wait for animation to finish
       setTimeout(() => {
         setUploading(false);
         setFile(null);
@@ -75,25 +75,23 @@ const Upload = ({ onUploadComplete }) => {
 
       {/* Floating animation */}
       <AnimatePresence>
-  {animateOut && file && (
-    <motion.div
-      initial={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-      animate={{ opacity: 0, y: 250, scale: 1.2, rotate: 5 }}
-      exit={{ opacity: 0 }}
-      transition={{
-      duration: 2,       // ⏱️ increase duration (from 1.1 → 2 seconds)
-      ease: 'easeOut',
-      bounce: 0.3,
-      delay: 0.2         // ⏳ small delay before movement starts
-    }}
-
-      className="absolute left-1/2 transform -translate-x-1/2 top-28 bg-indigo-100 text-indigo-800 px-6 py-3 rounded-xl shadow-lg text-lg font-semibold tracking-wide border border-indigo-300"
-    >
-      📄 {file.name}
-    </motion.div>
-  )}
-</AnimatePresence>
-
+        {animateOut && file && (
+          <motion.div
+            initial={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+            animate={{ opacity: 0, y: 250, scale: 1.2, rotate: 5 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 2,
+              ease: 'easeOut',
+              bounce: 0.3,
+              delay: 0.2
+            }}
+            className="absolute left-1/2 transform -translate-x-1/2 top-28 bg-indigo-100 text-indigo-800 px-6 py-3 rounded-xl shadow-lg text-lg font-semibold tracking-wide border border-indigo-300"
+          >
+            📄 {file.name}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

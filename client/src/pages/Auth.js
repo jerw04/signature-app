@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE from '../config'; // 👈 import the base URL
 
 const Auth = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,7 +13,7 @@ const Auth = ({ onLoginSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://localhost:5000/api/auth/${isLogin ? 'login' : 'register'}`;
+    const url = `${API_BASE}/api/auth/${isLogin ? 'login' : 'register'}`;
     
     try {
       const response = await axios.post(url, formData);
@@ -22,7 +23,7 @@ const Auth = ({ onLoginSuccess }) => {
 
       setTimeout(() => {
         onLoginSuccess();
-      }, 1000); // Slight delay before switching to dashboard
+      }, 1000);
     } catch (error) {
       setFeedback({
         message: error.response?.data.message || 'Authentication failed',

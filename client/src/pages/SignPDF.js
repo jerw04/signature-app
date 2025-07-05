@@ -3,12 +3,12 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import Draggable from 'react-draggable';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import sampleSignature from '../assets/sign.png';
-
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import API_BASE from '../config';
+import sampleSignature from '../assets/sign.png';
 
-// Load local worker for deployment-friendly setup
+// Load local worker
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 const SignPDF = () => {
@@ -19,7 +19,7 @@ const SignPDF = () => {
   const captureRef = useRef();
 
   const filePath = searchParams.get('file');
-  const pdfUrl = `http://localhost:5000/${filePath?.replace(/\\/g, '/')}`;
+  const pdfUrl = `${API_BASE}/${filePath?.replace(/\\/g, '/')}`;
   const fileId = filePath?.split('/').pop()?.split('-')[0];
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const SignPDF = () => {
       if (!fileId) return;
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5000/api/signatures/${fileId}`, {
+        const res = await axios.get(`${API_BASE}/api/signatures/${fileId}`, {
           headers: { 'x-auth-token': token }
         });
         if (res.data) setExistingSignature(res.data);
@@ -53,7 +53,7 @@ const SignPDF = () => {
         signer: 'User'
       };
 
-      const res = await axios.post('http://localhost:5000/api/signatures', payload, {
+      const res = await axios.post(`${API_BASE}/api/signatures`, payload, {
         headers: { 'x-auth-token': token }
       });
 
@@ -91,7 +91,6 @@ const SignPDF = () => {
     <div className="flex flex-col items-center p-6">
       <h2 className="text-2xl font-bold mb-6 text-indigo-700">🖊 Drag Your Signature</h2>
 
-      {/* Capture region */}
       <div
         ref={captureRef}
         className="relative shadow-xl rounded-xl overflow-hidden bg-white"
@@ -106,7 +105,6 @@ const SignPDF = () => {
           <Page pageNumber={1} width={600} />
         </Document>
 
-        {/* Existing Signature */}
         {existingSignature && (
           <div
             className="absolute pointer-events-none z-20"
@@ -123,7 +121,6 @@ const SignPDF = () => {
           </div>
         )}
 
-        {/* Draggable Signature */}
         <Draggable
           bounds="parent"
           position={signatureCoords}
@@ -146,7 +143,6 @@ const SignPDF = () => {
         </Draggable>
       </div>
 
-      {/* Buttons */}
       <div className="flex gap-4 mt-6">
         <button
           onClick={handleSave}

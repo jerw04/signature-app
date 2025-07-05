@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE from '../config';
 
 const DocumentDashboard = ({ refresh }) => {
   const [documents, setDocuments] = useState([]);
@@ -7,7 +8,7 @@ const DocumentDashboard = ({ refresh }) => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/docs/', {
+      const res = await axios.get(`${API_BASE}/api/docs/`, {
         headers: { 'x-auth-token': token }
       });
       setDocuments(res.data);
@@ -18,7 +19,7 @@ const DocumentDashboard = ({ refresh }) => {
 
   useEffect(() => {
     fetchDocuments();
-  }, [refresh]); // reload whenever refresh toggles
+  }, [refresh]);
 
   return (
     <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-200">
@@ -36,10 +37,9 @@ const DocumentDashboard = ({ refresh }) => {
                 Uploaded on {new Date(doc.createdAt).toLocaleString()}
               </p>
 
-              {/* Action Buttons */}
               <div className="mt-3 flex space-x-2">
                 <a
-                  href={`http://localhost:5000/${doc.path.replace(/\\/g, '/')}`}
+                  href={`${API_BASE}/${doc.path.replace(/\\/g, '/')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-indigo-500 text-white px-3 py-1.5 rounded hover:bg-indigo-600 text-sm transition"
