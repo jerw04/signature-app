@@ -53,6 +53,10 @@ app.get('/', (req, res) => {
   res.send('Signature App Backend is Running');
 });
 
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://your-frontend.vercel.app'],
+  credentials: true
+}));
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
